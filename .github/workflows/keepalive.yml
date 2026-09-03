@@ -1,0 +1,29 @@
+name: Keepalive Workflow
+
+on:
+  schedule:
+    - cron: '30 5 1,15 * *' 
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Keepalive Git Commit to separate branch
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          git checkout -b keepalive-branch
+          
+          echo "Last keepalive run: $(date)" > keepalive.txt
+          git add keepalive.txt
+          git commit -m "chore: keepalive"
+          
+          git push --force origin keepalive-branch
